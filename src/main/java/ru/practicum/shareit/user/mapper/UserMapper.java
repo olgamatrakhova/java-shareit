@@ -6,28 +6,31 @@ import ru.practicum.shareit.user.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class UserMapper {
     private UserMapper() {
     }
 
     public static UserDto toUserDto(User user) {
-        return user != null ?
-                UserDto.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .email(user.getEmail())
-                        .build() : null;
+        return Optional.ofNullable(user)
+                .map(u -> UserDto.builder()
+                        .id(u.getId())
+                        .name(u.getName())
+                        .email(u.getEmail())
+                        .build())
+                .orElse(null);
 
     }
 
     public static User toUser(UserDto userDto) {
-        return userDto != null ?
-                User.builder()
-                        .id(userDto.getId())
-                        .name(userDto.getName())
-                        .email(userDto.getEmail())
-                        .build() : null;
+        return Optional.ofNullable(userDto)
+                .map(dto -> User.builder()
+                        .id(dto.getId())
+                        .name(dto.getName())
+                        .email(dto.getEmail())
+                        .build())
+                .orElse(null);
     }
 
     public static List<UserDto> toListUsersDto(Collection<User> users) {

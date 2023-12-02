@@ -24,24 +24,21 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item addItem(Item item, Integer userId) {
         item.setId(idItem);
         item.setOwnerId(userId);
-        log.info("Добавлена вещь с id = {}, владелец с id = {} (createItem({},{}))", item, userId, item, userId);
         itemsMap.put(idItem++, item);
         return item;
     }
 
     @Override
     public List<Item> getAllItems(Integer userId) {
-        log.info("Получение списка всех вещей одного владельца c id = {} (getAllItems({}))", userId, userId);
         return itemsMap.values().stream().filter(item -> Objects.equals(item.getOwnerId(), userId)).collect(Collectors.toList());
     }
 
     @Override
     public Item getItemById(Integer itemId, Integer userId) {
         if (itemsMap.containsKey(itemId)) {
-            log.info("Получение вещи с id = {} (getItemById({},{}))", itemId, itemId, userId);
-            return itemsMap.get(itemId);
+           return itemsMap.get(itemId);
         }
-        log.warn("Получение вещи с id = {}, вещь не найдена (getItemById({},{}))", itemId, itemId, userId);
+        log.warn("Вещь с id = {} не найдена", itemId);
         throw new ItemNotFoundException("Нет такой вещи");
     }
 
@@ -49,7 +46,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item updateItemById(Item item, Integer userId, Integer itemId) {
         Item oldItem = itemsMap.get(itemId);
         if (!itemsMap.containsKey(itemId)) {
-            log.warn("Обновление вещи с id = {}, вещь не найдена (updateItemById({},{},{}))", itemId, item, userId, itemId);
+            log.warn("Вещь с id = {} не найдена", itemId);
             throw new ItemNotFoundException("Нет такой вещи");
         }
         if (!Objects.equals(oldItem.getOwnerId(), userId)) {
@@ -64,17 +61,15 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (item.getAvailable() != null) {
             oldItem.setAvailable(item.getAvailable());
         }
-        log.info("Обновление вещи {} (updateItemById({},{},{}))", oldItem, item, userId, itemId);
         return oldItem;
     }
 
     @Override
     public Item deleteItemById(Integer id) {
         if (itemsMap.containsKey(id)) {
-            log.info("Удаление вещи с id = {} (deleteItemById({}))", id, id);
             return itemsMap.remove(id);
         }
-        log.warn("Удаление вещи с id = {}, но такой вещи нет (deleteItemById({}))", id, id);
+        log.warn("Вещи с id = {} нет)", id);
         throw new ItemNotFoundException("Нет такой вещи");
     }
 

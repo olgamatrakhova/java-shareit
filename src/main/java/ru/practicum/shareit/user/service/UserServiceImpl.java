@@ -5,16 +5,16 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.storage.UserRepositoryImpl;
+import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepositoryImpl userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepositoryImpl userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -50,6 +50,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean checkEmail(String email, Integer userId) {
-        return userRepository.getUsers().stream().filter(user -> !user.getId().equals(userId)).anyMatch(user -> user.getEmail().equals(email));
+        return userRepository.getUsers().stream().anyMatch(user -> !user.getId().equals(userId) && user.getEmail().equals(email));
     }
 }

@@ -4,6 +4,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ItemMapper {
@@ -12,27 +13,30 @@ public class ItemMapper {
     }
 
     public static ItemDto toItemDto(Item item) {
-        return item != null ?
-                ItemDto.builder()
-                        .id(item.getId())
-                        .name(item.getName())
-                        .description(item.getDescription())
-                        .ownerId((item.getOwnerId()))
-                        .available(item.getAvailable())
-                        .request(item.getRequest())
-                        .build() : null;
+        return Optional.ofNullable(item)
+                .map(i -> ItemDto.builder()
+                        .id(i.getId())
+                        .name(i.getName())
+                        .description(i.getDescription())
+                        .ownerId((i.getOwnerId()))
+                        .available(i.getAvailable())
+                        .request(i.getRequest())
+                        .build())
+                .orElse(null);
     }
 
     public static Item toItem(ItemDto itemDto) {
-        return itemDto != null ?
-                Item.builder()
-                        .id(itemDto.getId())
-                        .name(itemDto.getName())
-                        .description(itemDto.getDescription())
-                        .ownerId(itemDto.getOwnerId())
-                        .available(itemDto.getAvailable())
-                        .request(itemDto.getRequest())
-                        .build() : null;
+        return Optional.ofNullable(itemDto)
+                .map(dto ->
+                        Item.builder()
+                                .id(dto.getId())
+                                .name(dto.getName())
+                                .description(dto.getDescription())
+                                .ownerId(dto.getOwnerId())
+                                .available(dto.getAvailable())
+                                .request(dto.getRequest())
+                                .build())
+                .orElse(null);
     }
 
     public static List<ItemDto> toItemListDto(List<Item> itemList) {

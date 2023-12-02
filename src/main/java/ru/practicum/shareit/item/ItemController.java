@@ -36,13 +36,13 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> addItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer id) {
-        log.info("Добавление вещи {} (addItem)", itemDto);
+        log.info("Добавление вещи : {} (addItem)", itemDto);
         return new ResponseEntity<>(itemService.addItem(itemDto, id), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<ItemDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
-        log.info("Получение вещи по пользователю {} (getAllItems)", userId);
+        log.info("Получение вещей по владельцу {} (getAllItems)", userId);
         return new ResponseEntity<>(itemService.getAllItems(userId), HttpStatus.OK);
     }
 

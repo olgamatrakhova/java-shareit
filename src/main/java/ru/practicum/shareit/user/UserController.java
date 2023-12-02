@@ -24,31 +24,31 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto) {
-        log.info("Добавление пользователя {} (addUser({}))", userDto, userDto);
+        log.info("Добавление пользователя {} (addUser)", userDto);
         return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers() {
-        log.info("Получение всех пользователей (getUsers())");
+        log.info("Получение всех пользователей (getUsers)");
         return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Integer id) {
-        log.info("Получение пользователя по id = {} (getUserById({}))", id, id);
+        log.info("Получение пользователя по id = {} (getUserById)", id);
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> updateUserById(@PathVariable Integer id, @RequestBody UserDto userDto) {
-        log.info("Обновление пользователя {} (updateUserById({},{}))", userDto, id, userDto);
+        log.info("Обновление пользователя {} (updateUserById) ", userDto);
         return new ResponseEntity<>(userService.updateUserById(id, userDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<UserDto> deleteUserById(@PathVariable Integer id) {
-        log.info("Удаление пользователя c id = {} (deleteUserById({}))", id, id);
+        log.info("Удаление пользователя c id = {} (deleteUserById)", id);
         return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.OK);
     }
 }
