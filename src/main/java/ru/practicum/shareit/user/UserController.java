@@ -1,29 +1,40 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.exception.AlreadyExistException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.util.Add;
+import ru.practicum.shareit.util.Update;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> addUser(@Validated(Add.class) @RequestBody UserDto userDto, BindingResult bindingResult) throws AlreadyExistException {
+        if (bindingResult.hasErrors()) {
+            log.error("Не удалось выполнить запрос создание пользователя: {} , email: {} не прошёл валидацию или не уникален", userDto, userDto.getEmail());
+            return ResponseEntity.badRequest().body(userDto);
+        }
         log.info("Добавление пользователя {} (addUser)", userDto);
         return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
     }
@@ -41,7 +52,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUserById(@PathVariable Integer id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUserById(@PathVariable Integer id, @Validated(Update.class) @RequestBody UserDto userDto) {
         log.info("Обновление пользователя {} (updateUserById) ", userDto);
         return new ResponseEntity<>(userService.updateUserById(id, userDto), HttpStatus.OK);
     }
@@ -49,6 +60,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<UserDto> deleteUserById(@PathVariable Integer id) {
         log.info("Удаление пользователя c id = {} (deleteUserById)", id);
-        return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.OK);
+        userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
