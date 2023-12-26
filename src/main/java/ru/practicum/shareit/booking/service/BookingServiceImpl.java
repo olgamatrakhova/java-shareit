@@ -46,10 +46,14 @@ public class BookingServiceImpl implements BookingService {
         if (item.getOwner().getId().equals(userId)) {
             throw new UserNotFoundException("Нельзя забронировать свою вещь");
         }
-        if (bookingRequestDto.getStart().isAfter(bookingRequestDto.getEnd())
-                || bookingRequestDto.getStart().equals(bookingRequestDto.getEnd())
-                || bookingRequestDto.getEnd().isBefore(LocalDateTime.now())) {
-            throw new BookingNotAvailableException("Не верное время бронирования");
+        if (bookingRequestDto.getStart().isAfter(bookingRequestDto.getEnd())) {
+            throw new BookingNotAvailableException("Не верное время бронирования. Дата начала не может быть позже даты окончания");
+        }
+        if (bookingRequestDto.getStart().equals(bookingRequestDto.getEnd())) {
+            throw new BookingNotAvailableException("Не верное время бронирования. Дата начала не может быть равна дате окончания");
+        }
+        if (bookingRequestDto.getEnd().isBefore(LocalDateTime.now())) {
+            throw new BookingNotAvailableException("Не верное время бронирования. Дата окончания не может быть раньше, чем текущая дата");
         }
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.WAITING)

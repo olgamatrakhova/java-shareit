@@ -53,11 +53,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseDto> getAllItemsByUserId(Integer userId) {
-        List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
-        List<Item> items = itemRepository.getItemsByOwnerIdOrderByIdAsc(userId);
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("Нет пользователя с id = " + userId);
         }
+        List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
+        List<Item> items = itemRepository.getItemsByOwnerIdOrderByIdAsc(userId);
         for (Item item : items) {
             List<CommentResponseDto> comments = CommentMapper
                     .toListComment(commentRepository.getAllByItemIdOrderByCreatedDesc(item.getId()));
@@ -74,7 +74,6 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Нет вещи с id = " + itemId));
         List<CommentResponseDto> comments = CommentMapper.toListComment(commentRepository.getAllByItemIdOrderByCreatedDesc(itemId));
         ItemResponseDto itemResponseDto = toItemResponseDto(item, null, null, comments);
-
         if (!item.getOwner().getId().equals(userId)) {
             return itemResponseDto;
         }
@@ -82,7 +81,6 @@ public class ItemServiceImpl implements ItemService {
                 itemId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(DESC, "end"));
         List<Booking> nextBooking = bookingRepository.getTop1BookingByItemIdAndEndIsAfterAndBookingStatusIs(
                 itemId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(Sort.Direction.ASC, "end"));
-
         if (lastBooking.isEmpty() && !nextBooking.isEmpty()) {
             itemResponseDto.setLastBooking(BookingMapper.toBookingResponseDto(nextBooking.get(0)));
             itemResponseDto.setNextBooking(null);
