@@ -2,44 +2,43 @@ package ru.practicum.shareit.item.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Builder
-@Getter
-@Setter
-@Entity
-@Table(name = "items")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+@Entity
+@Table(name = "comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "name", nullable = false)
-    private String name;
-    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
+    @Column(name = "text_comment", nullable = false)
+    private String text;
+    @JoinColumn(name = "item_id", nullable = false)
+    @ManyToOne(optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne(fetch = FetchType.EAGER)
-    private User owner;
-    @Column(name = "description")
-    private String description;
-    @Column(nullable = false)
-    private Boolean available;
-    @Column(name = "request_id")
-    private Integer requestId;
+    private Item item;
+    @JoinColumn(name = "user_id")
+    @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User author;
+    @Column(name = "created", columnDefinition = "timestamp")
+    @Builder.Default
+    private LocalDateTime created = LocalDateTime.now();
 }
